@@ -1,0 +1,19 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: mysql
+  password: password
+  timeout: 5000
+
+  development:
+    <<: *default
+    database: rails-api_dev
+  
+  test:
+    <<: *default
+    database: rails-api_test
+
+production:
+  <<: *default
+  database: rails-api_pro
