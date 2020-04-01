@@ -22,7 +22,7 @@ test:
   pool: 20
   username: root
   password: password
-  host: localhost
+  host: mysql
 
 production:
   <<: *default
