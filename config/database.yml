@@ -21,7 +21,7 @@ test:
   database: github-api_test-sample_test
   pool: 20
   username: root
-  password:
+  password: password
   host: localhost
 
 production:
