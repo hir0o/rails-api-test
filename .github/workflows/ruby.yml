@@ -29,6 +29,8 @@ jobs:
         bundle exec rake db:schema:load
       env:
         RAILS_ENV: test
+        DB_USER: root
+        DB_PASSWORD: root
 
     - name: Run RSpec
       run: bundle exec rspec

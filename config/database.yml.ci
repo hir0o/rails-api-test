@@ -3,6 +3,6 @@ test:
   encoding: utf8
   database: github-api_test-sample_test
   pool: 20
-  username: root
-  password: root
+  username: <%= ENV["DB_USER"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
   host: localhost
