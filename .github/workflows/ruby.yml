@@ -5,15 +5,41 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        ports:
-          - 3306
-        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 20s --health-timeout 10s --health-retries 10
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    
+    jobs:
+      setup_and_test_execution:
+    #ubuntu環境で動かします
+        runs-on: ubuntu-latest
+    
+    #GitHub Actionsでサポートしているrubyのversionは2.6系以降です
+        steps:
+        - uses: actions/checkout@v1
+        - name: Setup Ruby version
+          uses: actions/setup-ruby@master
+          with:
+            ruby-version: 2.6.x
+    
+    #MySQLをインストール
+        - name: Install dependent libralies
+          run: sudo apt-get install libmysqlclient-dev
+    
+        - name: Setup bundler
+          run: gem install bundler
+    
+        - name: bundle install
+          run: |
+            bundle install --jobs 4 --retry 3
+    
+    #test用に用意したdatabase.yml.ciをコピー、テスト環境用のDBを作成
+        - name: Setup Database
+          run: |
+            cp config/database.yml.ci config/database.yml
+            bundle exec rake db:create
+            bundle exec rake db:schema:load
+          env:
+            RAILS_ENV: test
+    
+        - name: Run RSpec
+          run: bundle exec rspec
+          env:
+            RAILS_ENV: test
