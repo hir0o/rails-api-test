@@ -6,30 +6,39 @@ on:
 jobs:
   setup_and_test_execution:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.6.2
+    services:
+      mysql:
+        image: mysql
+        ports:
+          - 8888:8888
+        env:
+          MYSQL_USER: root
+          MYSQL_PASSWORD: 
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        
+      steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6.2
+      - name: Install dependent libralies
+        run: sudo apt-get install libmysqlclient-dev
 
-    - name: Install dependent libralies
-      run: sudo apt-get install libmysqlclient-dev
+      - name: Setup bundler
+        run: gem install bundler
 
-    - name: Setup bundler
-      run: gem install bundler
+      - name: bundle install
+        run: |
+          bundle install --jobs 4 --retry 3
+      - name: Setup Database
+        run: |
+          sudo /etc/init.d/mysql start
+          bundle exec rake db:create
+          bundle exec rake db:schema:load
+        env:
+          RAILS_ENV: test
 
-    - name: bundle install
-      run: |
-        bundle install --jobs 4 --retry 3
-    - name: Setup Database
-      run: |
-        sudo /etc/init.d/mysql start
-        bundle exec rake db:create
-        bundle exec rake db:schema:load
-      env:
-        RAILS_ENV: test
-
-    - name: Run RSpec
-      run: bundle exec rspec
-      env:
-        RAILS_ENV: test
+      - name: Run RSpec
+        run: bundle exec rspec
+        env:
+          RAILS_ENV: test
