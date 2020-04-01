@@ -10,9 +10,8 @@ jobs:
   setup_and_test_execution:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup Ruby version
-      uses: actions/setup-ruby@master
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.6.2
 
