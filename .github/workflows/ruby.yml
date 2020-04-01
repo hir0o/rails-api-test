@@ -2,10 +2,7 @@ name: Ruby
 
 on:
   push:
-  #   branches: [ * ]
-  # pull_request:
-  #   branches: [ master ]
-    
+
 jobs:
   setup_and_test_execution:
     runs-on: ubuntu-latest
@@ -26,6 +23,7 @@ jobs:
         bundle install --jobs 4 --retry 3
     - name: Setup Database
       run: |
+        sudo /etc/init.d/mysql start
         bundle exec rake db:create
         bundle exec rake db:schema:load
       env:
