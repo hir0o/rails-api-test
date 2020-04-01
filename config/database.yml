@@ -10,19 +10,9 @@ default: &default
 development:
   <<: *default
   database: rails-api_dev
-
-# test:
-#   <<: *default
-#   database: rails-api_test
-
+  
 test:
-  adapter: mysql2
-  encoding: utf8
-  database: github-api_test-sample_test
-  pool: 20
-  username: root
-  password: root
-  host: localhost
+  <<: *default
 
 production:
   <<: *default
